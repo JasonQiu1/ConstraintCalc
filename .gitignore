@@ -9,5 +9,8 @@ __pycache__/
 # PyCharm files
 .idea/
 
+# instance folder used for config parameters
+/instance
+
 # Virtual environment
-venv/
+/venv
