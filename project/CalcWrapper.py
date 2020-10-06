@@ -47,6 +47,6 @@ def calc():
     testFile.write(codeOut)
     testFile.close()
     
-    calcOut = str(subprocess.run(['/usr/bin/racket', filePath],
+    calcOut = str(subprocess.run(['racket', filePath],
             stdout=subprocess.PIPE).stdout)
     return(re.search('\[([^]]+)', calcOut).group(1))

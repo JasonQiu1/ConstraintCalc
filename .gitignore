@@ -14,3 +14,13 @@ __pycache__/
 
 # Virtual environment
 /venv
+
+# server-side scripts
+*.sh
+
+# sockets
+*.socket
+*.sock
+
+# logs
+*.log
