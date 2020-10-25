@@ -1,5 +1,4 @@
 #lang racket
-
 (define (for-each-except exception procedure list)
   (define (loop items)
     (cond ((null? items) 'done)
@@ -34,7 +33,7 @@
           'ignored))
     (define (connect new-constraint)
       (unless (memq new-constraint constraints)
-          (set! constraints
+          (set! constraints 
                 (cons new-constraint constraints)))
       (when (has-value? me)
           (inform-about-value new-constraint))
@@ -61,70 +60,73 @@
 (define (connect connector new-constraint)
   ((connector 'connect) new-constraint))
 
-(define (adder a1 a2 sum)
-  (define (process-new-value)
-    (cond ((and (has-value? a1) (has-value? a2))
-           (set-value! sum
-                       (+ (get-value a1) (get-value a2))
-                       me))
-          ((and (has-value? a1) (has-value? sum))
-           (set-value! a2
-                       (- (get-value sum) (get-value a1))
-                       me))
-          ((and (has-value? a2) (has-value? sum))
-           (set-value! a1
-                       (- (get-value sum) (get-value a2))
-                       me))))
-  (define (process-forget-value)
-    (forget-value! sum me)
-    (forget-value! a1 me)
-    (forget-value! a2 me)
-    (process-new-value))
-  (define (me request)
-    (cond ((eq? request 'I-have-a-value)
-           (process-new-value))
-          ((eq? request 'I-lost-my-value)
-           (process-forget-value))
-          (else
-           (error "Unknown request -- ADDER" request))))
-  (connect a1 me)
-  (connect a2 me)
-  (connect sum me)
-  me)
+(define (make-unary-constraint has-operand-proc has-result-proc constraint-name)
+  (lambda (operand result)
+    (define (process-new-value)
+      (cond [(has-value? operand)
+             (set-value! result
+                         (has-operand-proc operand)
+                         me)]
+            [(has-value? result)
+             (set-value! operand
+                         (has-result-proc result)
+                         me)]))
+    (define (process-forget-value)
+      (forget-value! result me)
+      (forget-value! operand me)
+      (process-new-value))
+    (define (me request)
+      (cond ((eq? request 'I-have-a-value)  
+             (process-new-value))
+            ((eq? request 'I-lost-my-value) 
+             (process-forget-value))
+            (else 
+             (error (string-append "Unknown request -- " constraint-name) request))))
+    (connect operand me)
+    (connect result me)
+    me))
 
-(define (multiplier m1 m2 product)
-  (define (process-new-value)
-    (cond ((or (and (has-value? m1) (= (get-value m1) 0))
-               (and (has-value? m2) (= (get-value m2) 0)))
-           (set-value! product 0 me))
-          ((and (has-value? m1) (has-value? m2))
-           (set-value! product
-                       (* (get-value m1) (get-value m2))
-                       me))
-          ((and (has-value? product) (has-value? m1))
-           (set-value! m2
-                       (/ (get-value product) (get-value m1))
-                       me))
-          ((and (has-value? product) (has-value? m2))
-           (set-value! m1
-                       (/ (get-value product) (get-value m2))
-                       me))))
-  (define (process-forget-value)
-    (forget-value! product me)
-    (forget-value! m1 me)
-    (forget-value! m2 me)
-    (process-new-value))
-  (define (me request)
-    (cond ((eq? request 'I-have-a-value)
-           (process-new-value))
-          ((eq? request 'I-lost-my-value)
-           (process-forget-value))
-          (else
-           (error "Unknown request -- MULTIPLIER" request))))
-  (connect m1 me)
-  (connect m2 me)
-  (connect product me)
-  me)
+(define (make-binary-constraint has-both-proc has-first-proc has-second-proc constraint-name)
+  (lambda (operand1 operand2 result)
+    (define (process-new-value)
+      (cond ((and (has-value? operand1) (has-value? operand2))
+             (set-value! result
+                         (has-both-proc operand1 operand2)
+                         me))
+            ((and (has-value? operand1) (has-value? result))
+             (set-value! operand2
+                         (has-first-proc operand1 result)
+                         me))
+            ((and (has-value? operand2) (has-value? result))
+             (set-value! operand1
+                         (has-second-proc operand2 result)
+                         me))))
+    (define (process-forget-value)
+      (forget-value! result me)
+      (forget-value! operand1 me)
+      (forget-value! operand2 me)
+      (process-new-value))
+    (define (me request)
+      (cond ((eq? request 'I-have-a-value)  
+             (process-new-value))
+            ((eq? request 'I-lost-my-value) 
+             (process-forget-value))
+            (else 
+             (error (string-append "Unknown request -- " constraint-name) request))))
+    (connect operand1 me)
+    (connect operand2 me)
+    (connect result me)
+    me))
+  
+(define adder (make-binary-constraint (lambda (a1 a2) (+ (get-value a1) (get-value a2)))
+                                      (lambda (a1 sum) (- (get-value sum) (get-value a1)))
+                                      (lambda (a2 sum) (- (get-value sum) (get-value a2)))
+                                      "ADDER"))
+
+(define multiplier (make-binary-constraint (lambda (m1 m2) (* (get-value m1) (get-value m2)))
+                                           (lambda (m1 product) (/ (get-value product) (get-value m1)))
+                                           (lambda (m2 product) (/ (get-value product) (get-value m2)))
+                                           "MULTIPLIER"))
 
 (define (probe name connector)
   (define (print-probe value)
@@ -154,23 +156,107 @@
   (set-value! connector value me)
   me)
 
-(provide (all-defined-out))
+;; accessors for prefix expressions
+(define (get-op expr)
+  (if (> (length expr) 0)
+      (car expr)
+      '()))
+	
+(define (get-sub1 expr)
+  (if (> (length expr) 1)
+      (cadr expr)
+      '()))
+	
+(define (get-sub2 expr)
+  (if (> (length expr) 2)
+      (caddr expr)
+      '()))
+	
+; return unused name or "ans" if "ans" is found in expr
+(define next-list-name
+  (let ([count 0])
+    (lambda (expr)
+      (if (or (eq? (get-op expr) "ans") (null? (get-op expr)))	; returning "ans" will do nothing for nil cases
+          "ans"
+          (begin (set! count (+ count 1))
+                 (string-append "l" (number->string count)))))))
+	
+(define op-symbol-table #hash(("+" . "adder")
+                              ("-" . "adder")
+                              ("*" . "multiplier")
+                              ("const" . "constant")))
+	
+; future: cond analysis to handle unary, binary, constants
+(define (make-constraint-list op sub1-name sub2-name layer-name)
+  (list (hash-ref op-symbol-table op) sub1-name sub2-name layer-name))
+	
+;;(define (get-constraint-code expr names)
+;;  	(cond 	[(eq? (car expr) '+) (append (list (list 'adder (cadr names) (caddr names) layer-name)) (list (get-constraint-code (cadr expr) (cadr names) (cdr names)))) (list (get-constraint-code (caddr expr) (car names) (cdr names))))]
+;;			[else (list 'constant (car expr) layer-name)]))
+	
+; constrains right-hand side to left-hand side of eqtn by sharing the top-layer name
+(define (get-constraint-code-equaler expr top-layer-name)
+  (let ([lhs (get-constraint-code (cadr expr) top-layer-name)]
+        [rhs (get-constraint-code (caddr expr) top-layer-name)])
+    (append lhs rhs)))
+	
+; build list of constraint code for each layer and its subexpressions/sublayers
+; general case (binary op): (op sub1 sub2)
+; unary op: 				(op sub1)
+; constant:					(op)
+(define (get-constraint-code expr current-layer)
+  (let* ([op (get-op expr)]			; may be a constant
+         [sub1 (get-sub1 expr)]
+         [sub2 (get-sub2 expr)]
+         [sub1-name (next-list-name sub1)]
+         [sub2-name (next-list-name sub2)])
+    (cond [(eq? op "+") (append (list (make-constraint-list op sub1-name sub2-name current-layer))
+                                (get-constraint-code sub1 sub1-name)
+                                (get-constraint-code sub2 sub2-name))]
+          [(eq? op "-") (append (list (make-constraint-list op current-layer sub2-name sub1-name))
+                                (get-constraint-code sub1 sub1-name)
+                                (get-constraint-code sub2 sub2-name))]
+          [(number? op) (list (list "constant" op current-layer))]
+          [(eq? op "ans") '()])))	; assume an "ans" by itself is (+ (0) (ans))
 
-;; (define (celsius-fahrenheit-converter c f)
-;;   (let ((u (make-connector))
-;;         (v (make-connector))
-;;         (w (make-connector))
-;;         (x (make-connector))
-;;         (y (make-connector)))
-;;     (multiplier c w u)
-;;     (multiplier v x u)
-;;     (adder v y f)
-;;     (constant 9 w)
-;;     (constant 5 x)
-;;     (constant 32 y)
-;;     'ok))
-;; (define C (make-connector))
-;; (define F (make-connector))
-;; (celsius-fahrenheit-converter C F)
-;; (set-value! C 100 'user)
-;; (get-value F)
+(define (constraint-list->connector-name-list constraint-list)
+  (define (iter list)
+    (cond [(or (null? list)) (set)]
+          [(list? (car list)) (set-union (iter (car list)) (iter (cdr list)))]
+          [else (list->set (filter string? list))]))
+  (set->list (iter constraint-list)))
+
+(define (constraint-list->code-string constraint-list)
+  (substring (foldr string-append
+                    ""
+                    (map (lambda (c) (string-append " ("
+                                                    (substring (foldr string-append
+                                                                      ""
+                                                                      (map (lambda (e) (string-append " " (cond [(string? e) e]
+                                                                                                                [(number? e) (number->string e)]
+                                                                                                                [(symbol? e) (symbol->string e)]
+                                                                                                                [else "constraint-list->code-string: UNKNOWN ELEMENT"])))
+                                                                           c))
+                                                               1)
+                                                    ")"))
+                         constraint-list))
+             1))
+
+(define (make-constraint-system-code-string con-sys-name connector-name-list constraint-code-string)
+  (define make-connectors
+    (substring (foldr string-append
+                      ""
+                      (map (lambda (l) (string-append " (" l " (make-connector))" ))
+                           connector-name-list))
+               1))
+  (string-append "(define "
+                 con-sys-name
+                 " (let ("
+                 make-connectors
+                 ") "
+                 constraint-code-string
+                 " (get-value ans)))"))
+
+(define constraint-table #hash(("+" . 'adder)
+                               ("*" . 'multiplier)
+                               ("=" . 'equaler)))
