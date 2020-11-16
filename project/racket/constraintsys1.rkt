@@ -2,7 +2,7 @@
     ;; First two lines won't change
     #lang racket
     (require "ConstraintLogic.rkt")
-    
+
     ;; (define (func...
     ;; include a letter for each unknown var
     (define (celsius-fahrenheit-converter c f)
@@ -20,14 +20,14 @@
         (constant 5 x)
         (constant 32 y)
         'ok))
-    
+
     ;; make connectors for unknown vars
     (define C (make-connector))
     (define F (make-connector))
     (celsius-fahrenheit-converter C F)
     ;; user must set values for n-1 vars
     (set-value! C 100 'user)
-    
+
     ;; get value for unknown var (nth)
     ;; wrap answer in '[ ]'
     (display (string-append "["
