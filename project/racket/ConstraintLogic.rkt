@@ -203,9 +203,15 @@
   (list (hash-ref op-symbol-table op) sub1-name sub2-name layer-name))
 
 ; constrains right-hand side to left-hand side of eqtn by sharing the top-layer name
+<<<<<<< HEAD
 (define (get-constraint-list-equaler expr top-layer-name)
   (let ([lhs (get-constraint-list (cadr expr) top-layer-name)]
   		[rhs (get-constraint-list (caddr expr) top-layer-name)])
+=======
+(define (get-constraint-code-equaler expr top-layer-name)
+  (let ([lhs (get-constraint-code (cadr expr) top-layer-name)]
+  		[rhs (get-constraint-code (caddr expr) top-layer-name)])
+>>>>>>> 503c8ca5f413c276c46f14c799fd88fae2dd5a88
 	(append lhs rhs)))
 
 ; build list of constraint code for each layer and its subexpressions/sublayers
@@ -219,6 +225,7 @@
   		 [sub1-name (next-list-name sub1)]
   		 [sub2-name (next-list-name sub2)])
   	(cond [(eq? op '+) (append (list (make-constraint-list op sub1-name sub2-name current-layer))
+<<<<<<< HEAD
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
   		  [(eq? op '-) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
@@ -300,3 +307,85 @@
 (define-namespace-anchor a)
 (define ns (namespace-anchor->namespace a))
 (eval (call-with-input-string (make-constraint-system-code-string "TEST" (get-constraint-list-equaler parser 'top)) read) ns)
+=======
+  								(get-constraint-code sub1 sub1-name)
+  								(get-constraint-code sub2 sub2-name))]
+  		  [(eq? op '-) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
+  								(get-constraint-code sub1 sub1-name)
+  								(get-constraint-code sub2 sub2-name))]
+ 	 	  [(eq? op '*) (append (list (make-constraint-list op sub1-name sub2-name current-layer))
+  								(get-constraint-code sub1 sub1-name)
+  								(get-constraint-code sub2 sub2-name))]
+  		  [(eq? op '/) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
+  								(get-constraint-code sub1 sub1-name)
+  								(get-constraint-code sub2 sub2-name))]
+  		  [(number? op) (list (list 'constant op current-layer))]
+  		  [(eq? op 'ans) '()])))	; assume an "ans" by itself is (+ (0) (ans))
+
+; testing setup
+(define test-eqtn1 '(= (+ (5) (6)) (+ (1) (ans))))
+(define test-eqtn2 '(= (- (5) (6)) (+ (1) (ans))))
+(define test-eqtn3 '(= (/ (5) (6)) (* (2) (ans))))
+
+(define test-form1
+  (let ((ans (make-connector))
+ 	    (l1 (make-connector))
+        (l2 (make-connector))
+        (l3 (make-connector))
+        (top (make-connector)))
+	(adder l1 l2 top)
+	(constant 5 l1)
+	(constant 6 l2)
+	(adder l3 ans top)
+	(constant 1 l3)
+    (get-value ans)))
+
+(define test-form2
+  (let ((ans (make-connector))
+ 	    (l1 (make-connector))
+        (l2 (make-connector))
+        (l3 (make-connector))
+        (top (make-connector)))
+	(adder top l2 l1)
+	(constant 5 l1)
+	(constant 6 l2)
+	(adder l3 ans top)
+	(constant 1 l3)
+    (get-value ans)))
+
+(define test-form3
+  (let ((ans (make-connector))
+ 	    (l1 (make-connector))
+        (l2 (make-connector))
+        (l3 (make-connector))
+        (top (make-connector)))
+	(multiplier top l2 l1)
+	(constant 5 l1)
+	(constant 6 l2)
+	(multiplier l3 ans top)
+	(constant 2 l3)
+    (get-value ans)))
+
+; testing
+; (println test-form3)
+(println (get-constraint-code-equaler parser 'top))
+
+;; (define generic-formula
+;;   (let ((ans (make-connector))
+;;   		(l1 (make-connector))
+;;         (l2 (make-connector))
+;;         (l3 (make-connector))
+;;         (l4 (make-connector))
+;;         (l5 (make-connector))
+;;         (l6 (make-connector)))
+;;     (multiplier l6 l3 l1)
+;;     (multiplier l2 l4 l1)
+;;     (adder l2 l5 ans)
+;;     (constant 9 l3)
+;;     (constant 32 l5)
+;;     (constant 5 l4)
+;;     (constant 100.888 l6)
+;;     (get-value ans)))
+;;
+;; (print generic-formula)
+>>>>>>> 503c8ca5f413c276c46f14c799fd88fae2dd5a88

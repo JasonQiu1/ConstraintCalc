@@ -103,16 +103,29 @@ def parenthesize(formula):
     eq = ""
     op_stack = []
     operands = []
-    n = 0
+    # n = 0
+    occurences = 0
 
-    # while n < len(formula):
-    #     if (formula[n] in operator_amounts.keys()):
-    #         op_stack.append(formula[n])
-    #     elif (formula[n].isalpha() or formula[n].isdigit()):
-    #         operands.append(formula[n])
-    #         if len(operands) == 2:
-    #             eq += "(" + str(op_stack.pop()) + str(operands.pop()) + str(operands.pop()) + ")"
-    #     n+=1
+    for char in formula:
 
+        if char in operator_amounts.keys():
+            eq += "(" + char + " "
+            op_stack.append(char)
+            occurences = 0
 
-    return formula
+        elif char.isalpha() or char.isdigit():
+            eq += char + " "
+            occurences += 1
+
+        if operator_amounts[op_stack[-1]] == occurences:
+            eq = eq[:-1]
+            eq += ") "
+            occurences = 1
+            op_stack.pop()
+
+    while eq[-1] == " ":
+        eq = eq [:-1]
+    for i in op_stack:
+        eq += ")"
+
+    return eq
