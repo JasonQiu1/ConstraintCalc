@@ -1,6 +1,6 @@
 from . import app
 from flask import render_template, request
-from .CalcWrapper import calc, parenthesize
+from .CalcWrapper import *
 
 #Home Page of the Website
 #Form with two boxes "a" and "b"
@@ -11,7 +11,7 @@ def home():
     #if the method that gets called is POST, pass values to compute()
     if request.method == "POST":
         equation = request.form["equation"]
-        return f"<h1>{parenthesize(equation)}<h1>"
+        return f"<h1>{convert_to_scheme(equation)}<h1>"
 
     #else display calc page
     else:
