@@ -139,9 +139,12 @@
                                            (lambda (m2 product) (/ (get-value product) (get-value m2)))
                                            "MULTIPLIER"))
 
-(define squarer (make-unary-constraint (lambda (r) (* r r))
-                                       (lambda (s) (sqrt s))
-                                       "SQUARER"))
+; a^b = result
+(define powerer (make-binary-constraint (lambda (a b) (expt (get-value a) (get-value b)))
+                                           (lambda (a result) (log (get-value result) (get-value a)))
+                                           (lambda (b result) (expt (get-value result) (/ 1 (get-value b))))
+                                           "POWERER"))
+
 
 (define (probe name connector)
   (define (print-probe value)
@@ -200,6 +203,8 @@
 							  (- . adder)
                               (* . multiplier)
                               (/ . multiplier)
+                              (^ . powerer)
+                              (l . powerer)
                               (const . constant)))
 
 ; future: cond analysis to handle unary, binary, constants
@@ -232,6 +237,12 @@
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
   		  [(eq? op '/) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
+  								(get-constraint-list sub1 sub1-name)
+  								(get-constraint-list sub2 sub2-name))]
+ 	 	  [(eq? op '^) (append (list (make-constraint-list op sub1-name sub2-name current-layer))
+  								(get-constraint-list sub1 sub1-name)
+  								(get-constraint-list sub2 sub2-name))]
+  		  [(eq? op 'l) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
   		  [(number? op) (list (list 'constant op current-layer))]
