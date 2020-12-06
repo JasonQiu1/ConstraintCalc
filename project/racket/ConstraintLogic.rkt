@@ -139,6 +139,10 @@
                                            (lambda (m2 product) (/ (get-value product) (get-value m2)))
                                            "MULTIPLIER"))
 
+(define squarer (make-unary-constraint (lambda (r) (* r r))
+                                       (lambda (s) (sqrt s))
+                                       "SQUARER"))
+
 (define (probe name connector)
   (define (print-probe value)
     (newline)
