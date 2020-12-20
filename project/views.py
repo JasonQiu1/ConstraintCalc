@@ -1,6 +1,6 @@
 from . import app
 from flask import render_template, request
-from .CalcWrapper import calc
+from .CalcWrapper import *
 
 #Home Page of the Website
 #Form with two boxes "a" and "b"
@@ -10,9 +10,9 @@ from .CalcWrapper import calc
 def home():
     #if the method that gets called is POST, pass values to compute()
     if request.method == "POST":
-        a, b = request.form["a"], request.form["b"]
-        return f"<h1>{calc()}<h1>"
+        equation = request.form["equation"]
+        return f"<h1>{calc(equation)}<h1>"
+
     #else display calc page
     else:
         return render_template("calc.html")
-
