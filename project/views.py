@@ -10,7 +10,7 @@ from .CalcWrapper import *
 def home():
     #if the method that gets called is POST, pass values to compute()
     if request.method == "POST":
-        equation = request.form["equation"]
+        equation = convert_to_scheme(request.form["equation"])
         constraint_system = build_constraint_system(equation)
         return f"<h1>{calc(constraint_system)}<h1>"
 
