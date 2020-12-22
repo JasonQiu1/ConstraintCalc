@@ -24,8 +24,25 @@ def replace_with_spaces(replace, str):
         str = str.replace(i, " " + i +" ")
     return str
 
+def unary_to_binary_minus(charList):
+    for i, c in enumerate(charList):
+        if i == len(charList) - 1:
+            continue
+        elif c == "-" and (i == 0 or not(str(charList[i-1]).isdigit())):
+            charList.insert(i,"(")
+            charList[i+1]="-1"
+            charList.insert(i+2,"*")
+            operandEndIndex = i+4
+            if not(charList[i+3].isdigit()):
+                for c in charList[i+4:]:
+                    operandEndIndex += 1
+                    if c == ")":
+                        break;
+            charList.insert(operandEndIndex,")")
+    return charList
+
 def tokenize(eq):
-    eq = replace_with_spaces(["+","-","*","/","(",")","=", "sin", "cos"], eq)
+    eq = replace_with_spaces(["+","-","*","/","(",")","=", "^", "log",], eq)
     return eq.split()
 
 def rev(eq):
@@ -40,13 +57,16 @@ def rev(eq):
 
     return rev_eq
 
+def is_number(s):
+    return s.isnumeric() or s[1:].isnumeric()
+
 def in_to_pre(raw_eq):
-    formula = rev(tokenize(raw_eq))
+    formula = rev(unary_to_binary_minus(tokenize(raw_eq)))
 
     op_stack = []
     eq = []
 
-    operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "sin" : 3, "cos" : 3}
+    operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" : 3}
 
     for token in formula:
         if (token == "("):
@@ -62,9 +82,8 @@ def in_to_pre(raw_eq):
                 while (len(op_stack) != 0 and operators[token] <= operators[op_stack[-1]]):
                     eq.append(op_stack.pop())
                 op_stack.append(token)
-        elif token.isalpha() or token.isdigit():
+        elif token.isalpha() or is_number(token):
             eq.append(token)
-
 
     while op_stack:
         eq.append(op_stack.pop())
@@ -90,7 +109,7 @@ def parenthesize(formula):
             eq += "(" + char + " "
             op_stack.append(char)
             occurences.append(0)
-        elif char.isalpha() or char.isdigit():
+        elif char.isalpha() or is_number(char):
             eq += "(" + char + ")"  + " "
             occurences[-1] += 1
 
