@@ -13,7 +13,10 @@ __pycache__/
 /instance
 
 # Virtual environment
+/ConstraintCalc
 /venv
+/lib
+pyvenv.cfg
 
 # server-side scripts
 *.sh

@@ -1,22 +1,22 @@
 import subprocess, re, pathlib, os
 
-def build_constraint_system(raw_eqn):
+def build_constraint_system(converted_eqn):
     filePath = os.path.join(pathlib.Path(__file__).parent.absolute(),'racket', 'ConstraintSystemBuilder.rkt')
 
-    calcOut = str(subprocess.run(['racket', filePath, str(convert_to_scheme(raw_eqn))],
+    calcOut = str(subprocess.run(['racket', filePath, converted_eqn],
             stdout=subprocess.PIPE).stdout)
     return(re.search("\"(.*)\"", calcOut).group(1))
 
 def calc(constraint_system):
     filePath = os.path.join(pathlib.Path(__file__).parent.absolute(),'racket', 'TempConstraintSystem.rkt')
-    
+
     consysfile = open(filePath, 'w')
     consysfile.write("#lang racket\n(require \"ConstraintSystemBase.rkt\")\n" + constraint_system)
     consysfile.close()
-    
+
     calcOut = str(subprocess.run(['racket', filePath],
             stdout=subprocess.PIPE).stdout)
-    
+
     return(re.search("'(.*)\\\\n'", calcOut).group(1))
 
 def replace_with_spaces(replace, str):

@@ -41,7 +41,7 @@
                               (* . multiplier)
                               (/ . multiplier)
                               (^ . powerer)
-                              (l . powerer)
+                              (log . powerer)
                               (const . constant)))
 
 ; future: cond analysis to handle unary, binary, constants
@@ -79,11 +79,11 @@
  	 	  [(eq? op '^) (append (list (make-constraint-list op sub1-name sub2-name current-layer))
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
-  		  [(eq? op 'l) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
+  		  [(eq? op 'log) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
-  		  [(number? op) (list (list 'constant op current-layer))]
-  		  [(eq? op 'ans) '()])))	; assume an "ans" by itself is (+ (0) (ans))
+		  [(eq? op 'ans) '()]	; assume an "ans" by itself is (+ (0) (ans))
+  		  [else (list (list 'constant op current-layer))])))
 
 ; code parser procedures
 ; grabs the unique connector name symbols from the list of constraint code obtained from get-constraint-list
