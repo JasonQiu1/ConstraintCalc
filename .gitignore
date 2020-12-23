@@ -30,3 +30,6 @@ pyvenv.cfg
 
 # vim backup files
 *.*~
+
+# temporary file for executing the constraint system
+/project/racket/TempConstraintSystem.rkt

@@ -2,29 +2,44 @@ import subprocess, re, pathlib, os
 
 operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" : 3}
 
-def build_constraint_system(converted_eqn):
-    filePath = os.path.join(pathlib.Path(__file__).parent.absolute(),'racket', 'ConstraintSystemBuilder.rkt')
+# executes a racket program given the program's file path and arguments, and returns the part of the output captured by the regex
+def exec_racket_prog(file_path, arg, extract_regex):
+    out = str(subprocess.run(['racket', file_path, arg],
+            stdout=subprocess.PIPE).stdout)    
+    return(re.search(extract_regex, out).group(1))
 
-    calcOut = str(subprocess.run(['racket', filePath, converted_eqn],
-            stdout=subprocess.PIPE).stdout)
-    return(re.search("\"(.*)\"", calcOut).group(1))
+# returns the absolute filePath of a relative path beginning from the current directory (/project)
+def rel_to_abs_path(relative_path): 
+    return(os.path.join(pathlib.Path(__file__).parent.absolute(),relative_path))
 
-def calc(constraint_system):
-    filePath = os.path.join(pathlib.Path(__file__).parent.absolute(),'racket', 'TempConstraintSystem.rkt')
+# returns the a list of constraints that make up the constraint system given a prefixed, parenthesized equation
+def build_constraint_list(converted_eqn):
+    return(exec_racket_prog(rel_to_abs_path("racket/ConstraintListBuilder.rkt"), converted_eqn, "\'(.*)\\\\n"))
 
-    consysfile = open(filePath, 'w')
-    consysfile.write("#lang racket\n(require \"ConstraintSystemBase.rkt\")\n" + constraint_system)
-    consysfile.close()
+# returns the full Racket-executable constraint system
+def build_constraint_system(constraint_network):
+    return(exec_racket_prog(rel_to_abs_path("racket/ConstraintSystemBuilder.rkt"), constraint_network, "\"(.*)\""))
 
-    calcOut = str(subprocess.run(['racket', filePath],
-            stdout=subprocess.PIPE).stdout)
+# convert rational numbers into floating point numbers
+def convert(s):
+    try:
+        return float(s)
+    except ValueError:
+        num, denom = s.split('/')
+        return float(num) / float(denom)
 
-    return(re.search("'(.*)\\\\n'", calcOut).group(1))
+# returns the value of the unknown in the constraint system
+def exec_constraint_system(constraint_system):
+    file_path = rel_to_abs_path("racket/TempConstraintSystem.rkt")
+    con_sys_file = open(file_path, 'w')
+    con_sys_file.write("#lang racket\n(require \"ConstraintSystemBase.rkt\")\n" + constraint_system)
+    con_sys_file.close()
+    return(exec_racket_prog(file_path, constraint_system, "'(.*)\\\\n'"))
 
-def replace_with_spaces(replace, str):
+def replace_with_spaces(replace, string):
     for i in replace:
-        str = str.replace(i, " " + i +" ")
-    return str
+        string = string.replace(i, " " + i +" ")
+    return string
 
 def unary_to_binary_minus(charList):
     for i, c in enumerate(charList):

@@ -1,3 +1,0 @@
-#lang racket
-(require "ConstraintSystemBase.rkt")
-(define TEST (let ((l8 (make-connector)) (top (make-connector)) (l4 (make-connector)) (l9 (make-connector)) (l7 (make-connector)) (l3 (make-connector)) (l6 (make-connector)) (l2 (make-connector)) (l5 (make-connector)) (ans (make-connector)) (l1 (make-connector))) (adder l1 l2 top) (constant 3 l1) (powerer l3 l4 l2) (constant 5 l3) (multiplier l5 l6 l4) (constant -1 l5) (constant 9 l6) (adder top l7 ans) (adder l8 l9 l7) (constant 7 l8) (constant 12 l9) (get-value ans))) TEST

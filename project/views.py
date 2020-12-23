@@ -11,8 +11,9 @@ def home():
     #if the method that gets called is POST, pass values to compute()
     if request.method == "POST":
         equation = convert_to_scheme(request.form["equation"])
-        constraint_system = build_constraint_system(equation)
-        return f"<h1>{calc(constraint_system)}<h1>"
+        constraint_list = build_constraint_list(equation)
+        constraint_system = build_constraint_system(constraint_list)
+        return f"<h1>{convert(exec_constraint_system(constraint_system))}<h1>"
 
     #else display calc page
     else:
