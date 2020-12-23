@@ -1,5 +1,7 @@
 import subprocess, re, pathlib, os
 
+operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" : 3}
+
 def build_constraint_system(converted_eqn):
     filePath = os.path.join(pathlib.Path(__file__).parent.absolute(),'racket', 'ConstraintSystemBuilder.rkt')
 
@@ -28,12 +30,12 @@ def unary_to_binary_minus(charList):
     for i, c in enumerate(charList):
         if i == len(charList) - 1:
             continue
-        elif c == "-" and (i == 0 or not(str(charList[i-1]).isdigit())):
+        elif c == "-" and (i == 0 or charList[i-1] in operators.keys()):
             charList.insert(i,"(")
             charList[i+1]="-1"
             charList.insert(i+2,"*")
             operandEndIndex = i+4
-            if not(charList[i+3].isdigit()):
+            if charList[i+3] in operators.keys():
                 for c in charList[i+4:]:
                     operandEndIndex += 1
                     if c == ")":
@@ -42,7 +44,9 @@ def unary_to_binary_minus(charList):
     return charList
 
 def tokenize(eq):
-    eq = replace_with_spaces(["+","-","*","/","(",")","=", "^", "log",], eq)
+    operators_and_paren = list(operators.keys())
+    operators_and_paren.append(")")
+    eq = replace_with_spaces(operators_and_paren, eq)
     return eq.split()
 
 def rev(eq):
@@ -65,8 +69,6 @@ def in_to_pre(raw_eq):
 
     op_stack = []
     eq = []
-
-    operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" : 3}
 
     for token in formula:
         if (token == "("):
