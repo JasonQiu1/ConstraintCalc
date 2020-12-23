@@ -11,27 +11,20 @@
          #:args (expr)
          (with-input-from-string expr read)))
 
-;; accessors for prefix expressions
-(define (get-op expr)
-  (if (> (length expr) 0)
-  	  (car expr)
-  	  '()))
-
-(define (get-sub1 expr)
-  (if (> (length expr) 1)
-  	  (cadr expr)
-  	  '()))
-
-(define (get-sub2 expr)
-  (if (> (length expr) 2)
-  	  (caddr expr)
-  	  '()))
+; accessors for prefix expressions
+; expr: a list
+; len-guard: which element # you want to access. allows for safe access
+; len-guard ex: if the size of the list is 1, and len-guard is 1, this will safely access the 1st element
+(define (safe-list-ref expr len-guard)
+  (if (and (list? expr) (>= (length expr) len-guard))
+  	  (list-ref expr (- len-guard 1)) ; len-guard -1 is the element we want to get
+  	  '())) ; return nil if access was invalid
 
 ; return unused name or "ans" if "ans" is found in expr
 (define next-list-name
   (let ([count 0])
   	(lambda (expr)
-  		(if (or (eq? (get-op expr) 'ans) (null? (get-op expr)))	; returning "ans" will do nothing for nil cases
+  		(if (or (eq? (safe-list-ref expr 1) 'ans) (null? (safe-list-ref expr 1)))	; returning "ans" will do nothing for nil cases
   			'ans
   			(begin (set! count (+ count 1))
   		   	   	   (string->symbol (string-append "l" (number->string count))))))))
@@ -50,18 +43,25 @@
 
 ; constrains right-hand side to left-hand side of eqtn by sharing the top-layer name
 (define (get-constraint-list-equaler expr top-layer-name)
-  (let ([lhs (get-constraint-list (cadr expr) top-layer-name)]
-  		[rhs (get-constraint-list (caddr expr) top-layer-name)])
-	(append lhs rhs)))
+  (let ([lhs (cadr expr)]
+  		[rhs (caddr expr)])
+  	  (if (or (eq? 'ans (car lhs)) (eq? 'ans (car rhs))) ; if 'ans is by itself on the right or left
+  	  	  (append
+  	  		(get-constraint-list lhs 'ans)
+  	  		(get-constraint-list rhs 'ans))
+  	  	  (append
+  	  		(get-constraint-list lhs top-layer-name)
+  	  		(get-constraint-list rhs top-layer-name)))))
 
 ; build list of constraint code for each layer and its subexpressions/sublayers
 ; general case (binary op): (op sub1 sub2)
 ; unary op: 				(op sub1)
 ; constant:					(op)
 (define (get-constraint-list expr current-layer)
-  (let* ([op (get-op expr)]			; may be a constant
-  		 [sub1 (get-sub1 expr)]
-  		 [sub2 (get-sub2 expr)]
+  (let* ([op (safe-list-ref expr 1)]			; may be a constant (symbol or num)
+  		 [sub1 (safe-list-ref expr 2)]
+  		 [sub2 (safe-list-ref expr 3)]
+  		 [op-name (next-list-name op)]
   		 [sub1-name (next-list-name sub1)]
   		 [sub2-name (next-list-name sub2)])
   	(cond [(eq? op '+) (append (list (make-constraint-list op sub1-name sub2-name current-layer))
