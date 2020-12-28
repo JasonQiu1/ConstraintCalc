@@ -29,8 +29,9 @@
   			(begin (set! count (+ count 1))
   		   	   	   (string->symbol (string-append "l" (number->string count))))))))
 
+; hash table mapping symbols to their corresponding constraints
 (define op-symbol-table #hash((+ . adder)
-							  (- . adder)
+			      (- . adder)
                               (* . multiplier)
                               (/ . multiplier)
                               (^ . powerer)
