@@ -10,9 +10,6 @@ app.config['SECRET_KEY'] = 'secret'
 #Once submitted, "POST" method is used
 @app.route("/", methods = ["POST", "GET"])
 def home():
-    #if the method that gets called is POST, pass values to compute()
-    equation = convert_to_scheme(request.form["equation"])
-    return f"<h1>{convert(exec_constraint_system(constraint_system))}<h1>"
 
     print("***Creating EquationForm***")
     equation_form = EquationForm()
@@ -54,7 +51,7 @@ def home():
         constraint_system = build_constraint_system(substitute(session["constraint_list"]))
 
         answer = exec_constraint_system(constraint_system)
-        
+
         #Add variable bindings (dictionary) to list
         for n, i in enumerate(var_form.vars.data):
             r = dict(i)
@@ -68,4 +65,3 @@ def home():
         return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]))
 
     return render_template("calc.html", equation_form = equation_form, equation = equation)
->>>>>>> Stashed changes

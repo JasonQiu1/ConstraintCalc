@@ -155,7 +155,7 @@ def convert_to_scheme(raw_eq):
 
 # Gets variables from raw_eq
 def get_vars(raw_eq):
-    ops = list(operators.keys)
+    ops = list(operators.keys())
     ops.append(")")
     remove_tokens = ops
     tokens = tokenize(raw_eq)
