@@ -1,3 +1,6 @@
+; Code adapted and extended from LISP to Racket
+; Source (SICP Section 3.3.5): https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-22.html#%_sec_3.3.5
+
 #lang racket
 
 ; constraint net code

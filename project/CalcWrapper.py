@@ -77,7 +77,7 @@ def rev(eq):
     return rev_eq
 
 def is_number(s):
-    return s.isnumeric() or s[1:].isnumeric()
+    return s.isnumeric() or s[1:].replace(".","").isnumeric() or s.replace(".","").isnumeric()
 
 def in_to_pre(raw_eq):
     formula = rev(unary_to_binary_minus(tokenize(raw_eq)))
@@ -108,7 +108,7 @@ def in_to_pre(raw_eq):
     return rev(eq)
 
 def parenthesize(formula):
-    operator_amounts = {"=" : 2, "+" : 2, "-" : 2, "*" : 2, "/" : 2, "^": 2}
+    operator_amounts = {"=" : 2, "+" : 2, "-" : 2, "*" : 2, "/" : 2, "^": 2, "log": 2}
 
     eq = ""
     op_stack, operands = [], []

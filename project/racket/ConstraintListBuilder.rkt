@@ -29,8 +29,9 @@
   			(begin (set! count (+ count 1))
   		   	   	   (string->symbol (string-append "l" (number->string count))))))))
 
+; hash table mapping symbols to their corresponding constraints
 (define op-symbol-table #hash((+ . adder)
-							  (- . adder)
+			      (- . adder)
                               (* . multiplier)
                               (/ . multiplier)
                               (^ . powerer)
@@ -79,7 +80,7 @@
  	 	  [(eq? op '^) (append (list (make-constraint-list op sub1-name sub2-name current-layer))
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
-  		  [(eq? op 'log) (append (list (make-constraint-list op current-layer sub2-name sub1-name))
+  		  [(eq? op 'log) (append (list (make-constraint-list op sub1-name current-layer sub2-name))
   								(get-constraint-list sub1 sub1-name)
   								(get-constraint-list sub2 sub2-name))]
 		  [(eq? op 'ans) '()]	; assume an "ans" by itself is (+ (0) (ans))
