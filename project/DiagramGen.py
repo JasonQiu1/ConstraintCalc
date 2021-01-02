@@ -28,7 +28,7 @@ def generate_diagram(constraint_list):
     add_edges(constraint_list[1:-1])
     add_ans_node()
 
-    dpath = "static/diagram1.png"
+    dpath = "project/static/diagram1.png"
     G.write(path=dpath, format="png")
     return dpath
 

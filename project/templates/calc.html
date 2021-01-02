@@ -15,32 +15,43 @@
 	  {% endif %}
   {% endwith %}
 
-<form method="POST" action="#">
-  {{ equation_form.csrf_token }}
-  {{ equation_form.equation.label }}   {{ equation_form.equation(size = 20) }}
-  <!-- <p>Equation: </p> -->
-  <!-- <p><input type="text" name="raw_equation"></p> -->
-  <p><input type="submit" value = "submit" value=""></p>
-</form>
-
-{% if equation %}
-  <p>Your equation: {{ equation }}</p>
-{% endif %}
-
-{% if var_form %}
+<div class="container-fluid">
   <form method="POST" action="#">
-    {{var_form.hidden_tag()}}
-    {% for var_entry_form in var_form.vars %}
-      {{ var_entry_form.hidden_tag() }}
-      {{ var_entry_form.variable.label }}
-      {{ var_entry_form.variable(size=20) }}
-    {% endfor %}
+    {{ equation_form.csrf_token }}
+    {{ equation_form.equation.label }}   {{ equation_form.equation(size = 20) }}
+    <!-- <p>Equation: </p> -->
+    <!-- <p><input type="text" name="raw_equation"></p> -->
     <p><input type="submit" value = "submit" value=""></p>
   </form>
-{% endif %}
+</div>
 
-{% if var_bindings %}
-  <p>Your bindings: {{ var_bindings }}</p>
-{% endif %}
+<div class="container.fluid">
+  {% if equation %}
+    <p>Your equation: {{ equation }}</p>
+  {% endif %}
+</div>
+
+<div class="container.fluid">
+  {% if var_form %}
+    <form method="POST" action="#">
+      {{var_form.hidden_tag()}}
+      {% for var_entry_form in var_form.vars %}
+        <p>
+          {{ var_entry_form.hidden_tag() }}
+          {{ var_entry_form.variable.label }}
+          {{ var_entry_form.variable(size=20) }}
+        </p>
+      {% endfor %}
+      <p><input type="submit" value = "submit" value=""></p>
+    </form>
+  {% endif %}
+</div>
+
+<div class="container.fluid">
+  {% if diagram %}
+    <img src="{{ diagram }}" alt="Equation Diagram">
+  {% endif %}
+</div>
+
 
 {% endblock %}

@@ -2,8 +2,10 @@ from . import app
 from .CalcWrapper import *
 from .forms import *
 from flask import render_template, request, session, flash
+import os
 
 app.config['SECRET_KEY'] = 'secret'
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
 #Home Page of the Website
 #GET method is default when loading a page
@@ -26,8 +28,9 @@ def home():
         print("***Running equation_form submission!***")
 
         raw_equation = equation_form.equation.data
-        equation = convert_to_scheme(raw_equation)
+        equation = to_racket_lists(raw_equation)
         session["equation"] = equation
+        generate_diagram_from_eqn(raw_equation)
 
         constraint_list = build_constraint_list(equation)
         session["constraint_list"] = constraint_list
@@ -48,9 +51,9 @@ def home():
 
         session["var_bindings"] = []
 
-        constraint_system = build_constraint_system(substitute(session["constraint_list"]))
+        # constraint_system = build_constraint_system(substitute(session["constraint_list"]))
 
-        answer = exec_constraint_system(constraint_system)
+        # answer = exec_constraint_system(constraint_system)
 
         #Add variable bindings (dictionary) to list
         for n, i in enumerate(var_form.vars.data):
@@ -58,10 +61,17 @@ def home():
             del r['csrf_token']
             session["var_bindings"].append({list(session["var_list_of_dicts"][n].keys())[0] : list(r.values())[0]})
 
-        return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), var_bindings = session["var_bindings"])
+        return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), diagram = os.path.join('static','diagram1.png'))
 
     elif var_form.vars.data and not var_form.validate():
         flash(list(var_form.errors.items())[0][1][0])
         return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]))
 
     return render_template("calc.html", equation_form = equation_form, equation = equation)
+
+@app.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
