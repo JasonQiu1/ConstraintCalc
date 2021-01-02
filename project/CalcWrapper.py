@@ -167,6 +167,19 @@ def get_vars(raw_eq):
     return tokens
 
 # Substitutes bindings into equations and changes unknown to 'ans'.
-# **** Unimplemented ****
-def substitute(bindings, equation):
-    pass
+def substitute(listbindings, equation):
+    bindings = {}
+    for dict in listbindings:
+        bindings[list(dict)[0]] = dict[list(dict)[0]]
+    tokens = tokenize(equation)
+    substituted_eqn = ""
+    for t in tokens:
+        if (t in operators.keys() or t == ")"):
+            substituted_eqn += str(t)
+            continue
+        if (t in bindings.keys()):
+            if (bindings[t] == ""):
+                substituted_eqn += "ans"
+            else:
+                substituted_eqn += str(bindings[t])
+    return substituted_eqn
