@@ -1,6 +1,16 @@
 import subprocess, re, pathlib, os
+from DiagramGen import * 
 
+# all the operators and their precedence except ")"
 operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" : 3}
+
+# returns the answer to a substituted equation
+def calc(raw_eqn):
+    return exec_constraint_system(build_constraint_system(build_constraint_list(to_racket_lists(raw_eqn))))
+
+# generates a dragram of the constraint system from the unsubstituted equation
+def generate_diagram_from_eqn(raw_eqn):
+    return generate_diagram(build_constraint_list(to_racket_lists(raw_eqn)))
 
 # executes a racket program given the program's file path and arguments, and returns the part of the output captured by the regex
 def exec_racket_prog(file_path, arg, extract_regex):
@@ -42,6 +52,7 @@ def replace_with_spaces(replace, string):
         string = string.replace(i, " " + i +" ")
     return string
 
+# changes unary minus (e.g. -5) to binary minus (e.g. (-1 * 5) )
 def unary_to_binary_minus(charList):
     for i, c in enumerate(charList):
         if i == len(charList) - 1:
@@ -147,7 +158,8 @@ def parenthesize(formula):
 
     return eq
 
-def convert_to_scheme(raw_eq):
+# converts the raw equation into a representation racket can use (e.g. prefixed lists)
+def to_racket_lists(raw_eq):
     try:
         return(parenthesize(in_to_pre(raw_eq)))
     except:
