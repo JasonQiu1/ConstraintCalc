@@ -28,12 +28,9 @@ def home():
         print("***Running equation_form submission!***")
 
         raw_equation = equation_form.equation.data
+        session["raw_equation"] = raw_equation
         equation = to_racket_lists(raw_equation)
         session["equation"] = equation
-        generate_diagram_from_eqn(raw_equation)
-
-        constraint_list = build_constraint_list(equation)
-        session["constraint_list"] = constraint_list
 
         var_list_of_dicts = [{i:f"Enter value for {i}"} for i in get_vars(raw_equation)]
         session["var_list_of_dicts"] = var_list_of_dicts
@@ -42,7 +39,6 @@ def home():
         print("*** Populating var_form with variables")
         for i in var_list_of_dicts:
             var_form.vars.append_entry(i)
-
 
         return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]))
 
@@ -60,8 +56,15 @@ def home():
             r = dict(i)
             del r['csrf_token']
             session["var_bindings"].append({list(session["var_list_of_dicts"][n].keys())[0] : list(r.values())[0]})
+        
+        unknown_var = ""
+        for d in session["var_bindings"]:
+            if d[list(d)[0]] == "":
+                unknown_var = list(d)[0]
 
-        return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), diagram = os.path.join('static','diagram1.png'))
+        generate_diagram_from_eqn(substitute_ans(session["var_bindings"], session["raw_equation"]))
+        dpath = 'static/diagram1.png'
+        return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), unknown = unknown_var, answer = calc(substitute(session["var_bindings"], session["raw_equation"])), diagram = dpath)
 
     elif var_form.vars.data and not var_form.validate():
         flash(list(var_form.errors.items())[0][1][0])

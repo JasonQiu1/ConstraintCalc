@@ -33,3 +33,6 @@ pyvenv.cfg
 
 # temporary file for executing the constraint system
 /project/racket/TempConstraintSystem.rkt
+
+# temporary file for the diagram
+/project/static/diagram1.png

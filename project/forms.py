@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import Form, StringField, DecimalField, TextField, SubmitField, FieldList, FormField, Form
 from wtforms.validators import DataRequired, NumberRange, Length, ValidationError
 from wtforms.fields import Label
+from .CalcWrapper import is_number
 
 class EquationForm(FlaskForm):
     equation = StringField(
@@ -28,7 +29,7 @@ class VariableForm(FlaskForm):
             val = list(r.values())[0]
             if val is "":
                 num_null_values += 1
-            elif not val.isnumeric():
+            elif not is_number(val):
                 raise ValidationError(f" \"{val}\" is not a number. Please input numbers.")
         if num_null_values != 1:
             print(f"*** ERROR: There were {num_null_values} unassigned variable(s). There should be 1 ***")

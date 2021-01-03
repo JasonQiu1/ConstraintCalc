@@ -8,10 +8,6 @@ operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" 
 def calc(raw_eqn):
     return exec_constraint_system(build_constraint_system(build_constraint_list(to_racket_lists(raw_eqn))))
 
-# generates a dragram of the constraint system from the unsubstituted equation (with ans substitued)
-def generate_diagram_from_eqn(raw_eqn_with_ans):
-    return generate_diagram(build_constraint_list(to_racket_lists(raw_eqn_with_ans)))
-
 # executes a racket program given the program's file path and arguments, and returns the part of the output captured by the regex
 def exec_racket_prog(file_path, arg, extract_regex):
     out = str(subprocess.run(['racket', file_path, arg],
@@ -21,6 +17,10 @@ def exec_racket_prog(file_path, arg, extract_regex):
 # returns the absolute filePath of a relative path beginning from the current directory (/project)
 def rel_to_abs_path(relative_path):
     return(os.path.join(pathlib.Path(__file__).parent.absolute(),relative_path))
+
+# generates a dragram of the constraint system from the unsubstituted equation (with ans substitued)
+def generate_diagram_from_eqn(raw_eqn_with_ans):
+    return str(subprocess.run(['python', rel_to_abs_path('DiagramGen.py'), str(build_constraint_list(to_racket_lists(raw_eqn_with_ans)))], stdout=subprocess.PIPE).stdout)
 
 # returns the a list of constraints that make up the constraint system given a prefixed, parenthesized equation
 def build_constraint_list(converted_eqn):
@@ -170,13 +170,12 @@ def get_vars(raw_eq):
     ops = list(operators.keys())
     ops.append(")")
     remove_tokens = ops
-    tokens = tokenize(raw_eq)
-    for i in tokens:
-        if i in remove_tokens:
-            tokens.remove(i)
-        elif is_number(i):
-            tokens.remove(i)
-    return tokens
+    tokens = unary_to_binary_minus(tokenize(raw_eq))
+    vars = []
+    for t in tokens:
+        if not(t in remove_tokens or is_number(t)):
+            vars.append(t) 
+    return vars
 
 # Substitutes bindings into equations and changes unknown to 'ans'.
 def substitute(listbindings, equation):
@@ -195,3 +194,13 @@ def substitute(listbindings, equation):
             else:
                 substituted_eqn += str(bindings[t])
     return substituted_eqn
+
+# Substitutes only ans for the unknown
+def substitute_ans(listbindings, equation):
+    listbindings2 = []
+    for dict in listbindings:
+        d = dict
+        if dict[list(dict)[0]] != "":
+            d = {str(list(dict)[0]): str(list(dict)[0])}
+        listbindings2.append(d)
+    return substitute(listbindings2, equation)

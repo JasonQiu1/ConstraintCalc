@@ -48,6 +48,13 @@
 </div>
 
 <div class="container.fluid">
+  {% if (answer and unknown) %}
+    <p>The unknown variable (represented by “ans” in the diagram) is: {{ unknown }}</p>
+    <p>{{ unknown }} = {{ answer }}</p>
+  {% endif %}
+</div>
+
+<div class="container.fluid">
   {% if diagram %}
     <img src="{{ diagram }}" alt="Equation Diagram">
   {% endif %}

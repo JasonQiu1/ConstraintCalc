@@ -1,5 +1,9 @@
-import pydot, re, os
+import pydot, re, sys
 
+dpath="project/static/diagram1.png"
+
+# replace with cmdline arg
+constraint_network = sys.argv[1]
 # constraint_network = "((multiplier ans l2 l1) (powerer l3 l4 l1) (adder l3 l6 l5) (powerer l7 l8 l5) (constant 8 l7) (constant 2 l8) (multiplier l9 l10 l6) (constant 4 l9) (multiplier l11 l12 l10) (constant 2 l11) (constant 3 l12) (multiplier l4 l14 l13) (constant 1 l13) (constant 2 l14) (constant 4 l2))"
 
 # TESTS
@@ -12,6 +16,9 @@ import pydot, re, os
 # "((multiplier ans l2 l1) (powerer l3 l4 l1) (adder l3 l6 l5) (powerer l7 l8 l5) (constant 8 l7) (constant 2 l8) (multiplier l9 l10 l6) (constant 4 l9) (multiplier l11 l12 l10) (constant 2 l11) (constant 3 l12) (multiplier l4 l14 l13) (constant 1 l13) (constant 2 l14) (constant 4 l2))"
 # "((adder l1 l2 top) (multiplier l1 l4 l3) (constant 3 l3) (multiplier l5 l6 l4) (constant 8 l5) (multiplier l7 l8 l6) (constant -1 l7) (constant 19 l8) (powerer l9 l10 l2) (constant 5 l9) (powerer l11 l10 l12) (constant 9 l11) (constant 81 l12) (multiplier ans l13 top) (multiplier l14 l15 l13) (constant -1 l14) (adder l16 l17 l15) (constant 7 l16) (constant 12 l17))"
 
+# parenthesized blocks
+constraints = constraint_network[1:-1]
+
 # dict used for conversion from constraint type to symbol for graph
 constraint_symbols = {  "adder": "+",
                         "multiplier": "*",
@@ -21,16 +28,14 @@ constraint_symbols = {  "adder": "+",
 # define undirected graph (global)
 G = pydot.Dot(graph_type="graph")
 
-def generate_diagram(constraint_list):
+def main():
     # manually add the "ans" (unknown var) node
-    add_const_nodes(constraint_list[1:-1])
-    add_nonconst_nodes(constraint_list[1:-1])
-    add_edges(constraint_list[1:-1])
+    add_const_nodes(constraints)
+    add_nonconst_nodes(constraints)
+    add_edges(constraints)
     add_ans_node()
 
-    dpath = "project/static/diagram1.png"
     G.write(path=dpath, format="png")
-    return dpath
 
 # add all constant constraints to graph
 # constant nodes are circle and named after the connector
@@ -117,7 +122,7 @@ def connect_nodes(node1_name, node2_name, node2_list):
 def add_ans_node():
     # connect ans to its respective constraint
     G.add_node(pydot.Node("ans", shape="square", style="filled", \
-                            fillcolor="lightgreen"))
+                            fillcolor="palegreen"))
     for node in G.get_nodes():
         node_name = node.get_name()
         if ("ans" in node_name) and (node_name != "ans"):
@@ -133,3 +138,7 @@ def retrieve_name(members):
         current_node_name = members[1]+"_"+members[2]+"_"+members[3]
 
     return current_node_name
+
+# run program
+main()
+print(dpath)
