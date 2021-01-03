@@ -13,7 +13,7 @@ __pycache__/
 /instance
 
 # Virtual environment
-/ConstraintCalc
+/CCvenv
 /venv
 /lib
 pyvenv.cfg

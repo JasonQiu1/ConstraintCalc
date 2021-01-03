@@ -1,9 +1,12 @@
-; Code adapted and extended from LISP to Racket
+; Code adapted and extended from Mit-Scheme to Racket
 ; Source (SICP Section 3.3.5): https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-22.html#%_sec_3.3.5
+
+; This file is not commented since explanations are found in the SICP book for each code segment
+; Slight syntax modifications were made for racket
+; Some functions were replaced from the original SICP implementation with built-in racket equivalents
 
 #lang racket
 
-; constraint net code
 (define (for-each-except exception procedure list)
   (define (loop items)
     (cond ((null? items) 'done)
