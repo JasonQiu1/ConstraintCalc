@@ -60,5 +60,20 @@
   {% endif %}
 </div>
 
+<div class="container.fluid">
+  {% if exception %}
+    <h3>Something went wrong! Here's what could have happened:</h3>
+    <ol>
+      <li>The inputted equation is not formatted correctly (remember that <b>log base a of b</b> is written as <b>alogb</b> or <b>a log b</b>).</li>
+      <li>More than one variable box is blank, or none are blank.</li>
+      <li>Some operator(s) in the equation is not yet supported.</li>
+      <li>An operation could be dividing by 0.</li>
+      <li>An operation is 0^n where n is negative</li>
+      <li>An operation is alogb where b is less than 1.</li>
+      <li>An operation is alogb where a is 1.</li>
+      <li>If it still doesn't work, then don't hesitate to contact us at <a href="mailto:jason.blank.qiu@gmail.com">jason.blank.qiu@gmail.com</a></li>
+    </ol>
+  {% endif %}
+</div>
 
 {% endblock %}

@@ -61,10 +61,15 @@ def home():
         for d in session["var_bindings"]:
             if d[list(d)[0]] == "":
                 unknown_var = list(d)[0]
+       
+        try:
+            ans = calc(substitute(session["var_bindings"], session["raw_equation"])) 
+        except:
+            return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), exception = 1) 
 
         generate_diagram_from_eqn(substitute_ans(session["var_bindings"], session["raw_equation"]))
         dpath = 'static/diagram1.png'
-        return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), unknown = unknown_var, answer = calc(substitute(session["var_bindings"], session["raw_equation"])), diagram = dpath)
+        return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), unknown = unknown_var, answer = ans, diagram = dpath)
 
     elif var_form.vars.data and not var_form.validate():
         flash(list(var_form.errors.items())[0][1][0])

@@ -56,7 +56,7 @@ generic-system
                     (map (lambda (c) (string-append " ("
                                                     (substring (foldr string-append
                                                                       ""
-                                                                      (map (lambda (e) (string-append " " (constraintele->string e))))
+                                                                      (map (lambda (e) (string-append " " (constraintele->string e)))
                                                                            c))
                                                                1)
                                                     ")"))

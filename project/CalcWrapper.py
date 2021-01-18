@@ -185,7 +185,7 @@ def substitute(listbindings, equation):
     tokens = tokenize(equation)
     substituted_eqn = ""
     for t in tokens:
-        if (t in operators.keys() or t == ")"):
+        if (t in operators.keys() or t == ")" or is_number(t)):
             substituted_eqn += str(t)
             continue
         if (t in bindings.keys()):
