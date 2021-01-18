@@ -13,7 +13,10 @@ __pycache__/
 /instance
 
 # Virtual environment
+/CCvenv
 /venv
+/lib
+pyvenv.cfg
 
 # server-side scripts
 *.sh
@@ -24,3 +27,12 @@ __pycache__/
 
 # logs
 *.log
+
+# vim backup files
+*.*~
+
+# temporary file for executing the constraint system
+/project/racket/TempConstraintSystem.rkt
+
+# temporary file for the diagram
+/project/static/diagram1.png
