@@ -13,15 +13,16 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 @app.route("/", methods = ["POST", "GET"])
 def home():
 
-    print("***Creating EquationForm***")
-    equation_form = EquationForm()
-    equation = None
-
     print("***Creating VariableForm***")
     var_form = VariableForm()
     var_list_of_dicts = None
 
     var_bindings = None
+
+    print("***Creating EquationForm***")
+    equation_form = EquationForm()
+
+    equation = None
 
     # constraint_system = build_constraint_system(equation)
     if equation_form.data and equation_form.validate():
@@ -45,6 +46,8 @@ def home():
     elif var_form.vars.data and var_form.validate():
         print("***Running var_form submission!***")
 
+        equation_form.equation.data = session['raw_equation']
+
         session["var_bindings"] = []
 
         # constraint_system = build_constraint_system(substitute(session["constraint_list"]))
@@ -56,16 +59,16 @@ def home():
             r = dict(i)
             del r['csrf_token']
             session["var_bindings"].append({list(session["var_list_of_dicts"][n].keys())[0] : list(r.values())[0]})
-        
+
         unknown_var = ""
         for d in session["var_bindings"]:
             if d[list(d)[0]] == "":
                 unknown_var = list(d)[0]
-       
+
         try:
-            ans = calc(substitute(session["var_bindings"], session["raw_equation"])) 
+            ans = calc(substitute(session["var_bindings"], session["raw_equation"]))
         except:
-            return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), exception = 1) 
+            return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]), exception = 1)
 
         generate_diagram_from_eqn(substitute_ans(session["var_bindings"], session["raw_equation"]))
         dpath = 'static/diagram1.png'
