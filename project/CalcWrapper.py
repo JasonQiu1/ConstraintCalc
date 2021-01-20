@@ -1,5 +1,4 @@
 import subprocess, re, pathlib, os
-from .DiagramGen import *
 
 # all the operators and their precedence except ")"
 operators = {"(": -1, "=": 0, "+" : 1, "-" : 1, "*" : 2, "/" : 2, "^": 3, "log" : 3}
@@ -20,7 +19,7 @@ def rel_to_abs_path(relative_path):
 
 # generates a dragram of the constraint system from the unsubstituted equation (with ans substitued)
 def generate_diagram_from_eqn(raw_eqn_with_ans):
-    return str(subprocess.run(['python', rel_to_abs_path('DiagramGen.py'), str(build_constraint_list(to_racket_lists(raw_eqn_with_ans)))], stdout=subprocess.PIPE).stdout)
+    return str(subprocess.run(['python3', rel_to_abs_path('DiagramGen.py'), str(build_constraint_list(to_racket_lists(raw_eqn_with_ans)))], stdout=subprocess.PIPE).stdout)
 
 # returns the a list of constraints that make up the constraint system given a prefixed, parenthesized equation
 def build_constraint_list(converted_eqn):
