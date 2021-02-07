@@ -23,18 +23,21 @@
         </ul>
       </div>
     </nav>
-    <h1>Constraint Calculator</h1>
-    <h3><a href="https://github.com/JasonQiu1/ConstraintCalc">Github</a></h3>
-    <p>Created by Patrick O'Boyle, Pinaki Bhagavan, and Jason Qiu
-    <br>
-    <h3>Quick Tutorial</h3>
-    <p>The following operations are supported: + - * / ^ log</p>
-    <p>Enter an infix equation like this one: 3/a*-19+(5+b)^(9log81)=c*-(7+12)</p>
-    <p>9log81 is read as “log base 9 of 81”</p>
-    <p>After submitting your equation, you’ll be able to declare variable bindings. Make sure to leave the box for the unknown variable blank! After submitting that form, you should get the answer and a diagram that shows a little bit of what the backend is doing to calculate that answer.</p>
-    
-    {% block content %}
-    {% endblock %}
+    <div class="ml-3">
+      <h1>Constraint Calculator</h1>
+      <h3><a href="https://github.com/JasonQiu1/ConstraintCalc">Github</a></h3>
+      <p>Created by Patrick O'Boyle, Mrinal (Pinaki) Bhagavan, and Jason Qiu
+      <br>
+      <h3>Quick Tutorial</h3>
+      <p>The following operations are supported: + - * / ^ log</p>
+      <p>Enter an infix equation like this one: 3/a*-19+(5+b)^(9log81)=c*-(7+12)</p>
+      <p>9log81 is read as “log base 9 of 81”</p>
+      <p>After submitting your equation, you’ll be able to declare variable bindings. Make sure to leave the box for the unknown variable blank! After submitting that form, you should get the answer and a diagram that shows a little bit of what the backend is doing to calculate that answer.</p>
+
+      {% block content %}
+      {% endblock %}
+    </div>
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
