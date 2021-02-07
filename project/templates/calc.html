@@ -16,40 +16,46 @@
   {% endwith %}
 
 <div class="container-fluid">
-  <form method="POST" action="#">
-    {{ equation_form.csrf_token }}
-    {{ equation_form.equation.label }}   {{ equation_form.equation(size = 20) }}
-    <!-- <p>Equation: </p> -->
-    <!-- <p><input type="text" name="raw_equation"></p> -->
-    <p><input type="submit" value = "submit" value=""></p>
-  </form>
+  <div class="row">
+    <div class="col">
+      <form method="POST" action="#">
+        {{ equation_form.csrf_token }}
+        {{ equation_form.equation.label }}   {{ equation_form.equation(size = 20) }}
+        <!-- <p>Equation: </p> -->
+        <!-- <p><input type="text" name="raw_equation"></p> -->
+        <p><input type="submit" value = "submit" value=""></p>
+      </form>
 
-  {% if equation %}
-    <p>Your equation: {{ equation }}</p>
-  {% endif %}
+      {% if equation %}
+        <p>Your equation: {{ equation }}</p>
+      {% endif %}
 
-  {% if var_form %}
-    <form method="POST" action="#">
-      {{var_form.hidden_tag()}}
-      {% for var_entry_form in var_form.vars %}
-        <p>
-          {{ var_entry_form.hidden_tag() }}
-          {{ var_entry_form.variable.label }}
-          {{ var_entry_form.variable(size=20) }}
-        </p>
-      {% endfor %}
-      <p><input type="submit" value = "submit" value=""></p>
-    </form>
-  {% endif %}
+      {% if var_form %}
+        <form method="POST" action="#">
+          {{var_form.hidden_tag()}}
+          {% for var_entry_form in var_form.vars %}
+            <p>
+              {{ var_entry_form.hidden_tag() }}
+              {{ var_entry_form.variable.label }}
+              {{ var_entry_form.variable(size=20) }}
+            </p>
+          {% endfor %}
+          <p><input type="submit" value = "submit" value=""></p>
+        </form>
+      {% endif %}
+    </div>
 
-  {% if (answer and unknown) %}
-    <p>The unknown variable (represented by “ans” in the diagram) is: {{ unknown }}</p>
-    <p>{{ unknown }} = {{ answer }}</p>
-  {% endif %}
+    <div class="col">
+      {% if (answer and unknown) %}
+        <p>The unknown variable (represented by “ans” in the diagram) is: {{ unknown }}</p>
+        <p>{{ unknown }} = {{ answer }}</p>
+      {% endif %}
 
-  {% if diagram %}
-    <img src="{{ diagram }}" alt="Equation Diagram">
-  {% endif %}
+      {% if diagram %}
+        <img src="{{ diagram }}" alt="Equation Diagram">
+      {% endif %}
+    </div>
+  </div>
 </div>
 
 
