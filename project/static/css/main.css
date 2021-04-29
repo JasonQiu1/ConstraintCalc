@@ -1,1 +1,23 @@
+.section {
+  margin-top: 4em;
+}
 
+.component {
+  position: relative;
+}
+
+.component+.component {
+  margin-top: 1rem;
+}
+
+.align-center {
+  align-items: center;
+  display: flex;
+  vertical-align: middle;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}

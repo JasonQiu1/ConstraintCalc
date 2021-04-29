@@ -83,3 +83,4 @@ def add_header(response):
     if 'Cache-Control' not in response.headers:
         response.headers['Cache-Control'] = 'no-store'
     return response
+

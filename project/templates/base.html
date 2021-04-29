@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://bootswatch.com/4/litera/bootstrap.css" integrity="sha384-IP+AVbS23QV4arLbN6qmbbMJ0WYXn+rC4x2ERHuXeVTtMtjmto4S4cLXjvywfNRy" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/main.css">
     <meta charset="utf-8">
     <title>{%block title%}{% endblock %}</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li> -->
-        </ul>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+      <a class="navbar-brand" href="#"><h1>Constraint Calculator</h1></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        <div class="collapse navbar-collapse align-center" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/JasonQiu1/ConstraintCalc" target="_blank">Github<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <p class="nav-link">Created by Patrick O'Boyle, Pinaki Bhagavan, and Jason Qiu</p>
+            </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li> -->
+          </ul>
+        </div>
       </div>
     </nav>
-    <h1>Constraint Calculator</h1>
-    <h3><a href="https://github.com/JasonQiu1/ConstraintCalc">Github</a></h3>
-    <p>Created by Patrick O'Boyle, Pinaki Bhagavan, and Jason Qiu
-    <br>
-    <h3>Quick Tutorial</h3>
-    <p>The following operations are supported: + - * / ^ log</p>
-    <p>Enter an infix equation like this one: 3/a*-19+(5+b)^(9log81)=c*-(7+12)</p>
-    <p>9log81 is read as “log base 9 of 81”</p>
-    <p>After submitting your equation, you’ll be able to declare variable bindings. Make sure to leave the box for the unknown variable blank! After submitting that form, you should get the answer and a diagram that shows a little bit of what the backend is doing to calculate that answer.</p>
+    <div class="container">
+      <br>
+      <div class="section">
+        <h3>Rundown</h3>
+        <p>The following operations are supported: + - * / ^ log</p>
+        <p>9logb is read as “log base 9 of b”</p>
+        <p>Enter an infix equation like this one: 3/a*-19+(5+b)^(9log81)=c*-(7+12)</p>
+        <p>After submitting your equation, you’ll be able to declare variable bindings. Make sure to leave the box for the unknown variable blank! After submitting that form, you should get the answer and a diagram that shows a little bit of what the backend is doing to calculate that answer.</p>
+      </div>
+    </div>
     
     {% block content %}
     {% endblock %}
