@@ -5,10 +5,7 @@ from wtforms.fields import Label
 from .CalcWrapper import is_number
 
 class EquationForm(FlaskForm):
-    equation = StringField(
-        'Equation',
-        [DataRequired()]
-    )
+    equation = StringField('Equation', validators = [DataRequired()])
     submit = SubmitField('submit')
 
 def get_filled_equation_form(defaultvalue):

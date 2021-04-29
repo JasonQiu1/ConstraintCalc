@@ -173,7 +173,7 @@ def get_vars(raw_eq):
     vars = []
     for t in tokens:
         if not(t in remove_tokens or is_number(t)):
-            vars.append(t) 
+            vars.append(t)
     return vars
 
 # Substitutes bindings into equations and changes unknown to 'ans'.
