@@ -24,7 +24,6 @@ def home():
 
     equation = None
 
-    # constraint_system = build_constraint_system(equation)
     if equation_form.data and equation_form.validate():
         print("***Running equation_form submission!***")
 
@@ -49,10 +48,6 @@ def home():
         equation_form.equation.data = session['raw_equation']
 
         session["var_bindings"] = []
-
-        # constraint_system = build_constraint_system(substitute(session["constraint_list"]))
-
-        # answer = exec_constraint_system(constraint_system)
 
         #Add variable bindings (dictionary) to list
         for n, i in enumerate(var_form.vars.data):
