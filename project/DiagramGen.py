@@ -2,11 +2,12 @@ import pydot, re, sys
 
 dpath="project/static/diagram1.png"
 
-# replace with cmdline arg
+# constraint network from racket
+# can replace the cmdline arg with test strings below to debug
 constraint_network = sys.argv[1]
-# constraint_network = "((multiplier ans l2 l1) (powerer l3 l4 l1) (adder l3 l6 l5) (powerer l7 l8 l5) (constant 8 l7) (constant 2 l8) (multiplier l9 l10 l6) (constant 4 l9) (multiplier l11 l12 l10) (constant 2 l11) (constant 3 l12) (multiplier l4 l14 l13) (constant 1 l13) (constant 2 l14) (constant 4 l2))"
 
 # TESTS
+
 # Basic
 # "((adder ans l2 l1) (constant a l1) (constant b l2))"
 # "((adder l1 l2 top) (constant a l1) (constant b l2) (adder l3 ans top) (constant c l3))"
