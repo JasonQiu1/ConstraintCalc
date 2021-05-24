@@ -8,11 +8,6 @@ class EquationForm(FlaskForm):
     equation = StringField('Equation', validators = [DataRequired()])
     submit = SubmitField('submit')
 
-def get_filled_equation_form(defaultvalue):
-    eq_form = EquationForm()
-    eq_form.equation(default=defaultvalue)
-    return eq_form
-
 class VariableEntryForm(FlaskForm):
     variable = StringField(
         'var'
