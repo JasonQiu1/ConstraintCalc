@@ -33,6 +33,7 @@ class VariableForm(FlaskForm):
             raise ValidationError(f"There were {num_null_values} unassigned variable(s). All of the boxes should be filled except for the variable you are trying to solve.")
 
 def format_var_form(var_form, var_list_of_dicts):
+    # Populates the variable form from the list of variables
     for n, i in enumerate(var_list_of_dicts):
         l = Label(field_id = "variable", text = list(i.keys())[0])
         var_form.vars[n].variable.label = l
