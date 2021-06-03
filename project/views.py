@@ -49,7 +49,7 @@ def home():
         # BRANCH for valid variable form submission
         print("***Running var_form submission!***")
 
-        # Grab session data
+        # Grab session data to preserve the equation in the equation form
         equation_form.equation.data = session['raw_equation']
         session["var_bindings"] = []
 
@@ -77,6 +77,12 @@ def home():
 
     elif var_form.vars.data and not var_form.validate():
         # BRANCH for invalid variable form submission
+        
+        # Grab session data to preserve equation in equation box
+        equation_form.equation.data = session['raw_equation']
+        session["var_bindings"] = []
+
+        # flash a warning on invalid variables and return the page
         flash(list(var_form.errors.items())[0][1][0])
         return render_template("calc.html", equation_form = equation_form, equation = session["equation"], var_form = format_var_form(var_form, session["var_list_of_dicts"]))
 
