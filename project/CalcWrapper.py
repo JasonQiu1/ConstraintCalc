@@ -172,8 +172,8 @@ def get_vars(raw_eq):
     tokens = unary_to_binary_minus(tokenize(raw_eq))
     vars = []
     for t in tokens:
-        if not(t in remove_tokens or is_number(t)):
-            vars.append(t) 
+        if not(t in vars or t in remove_tokens or is_number(t)):
+            vars.append(t)
     return vars
 
 # Substitutes bindings into equations and changes unknown to 'ans'.

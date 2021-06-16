@@ -5,10 +5,7 @@ from wtforms.fields import Label
 from .CalcWrapper import is_number
 
 class EquationForm(FlaskForm):
-    equation = StringField(
-        'Equation',
-        [DataRequired()]
-    )
+    equation = StringField('Equation', validators = [DataRequired()])
     submit = SubmitField('submit')
 
 class VariableEntryForm(FlaskForm):
@@ -32,10 +29,11 @@ class VariableForm(FlaskForm):
             elif not is_number(val):
                 raise ValidationError(f" \"{val}\" is not a number. Please input numbers.")
         if num_null_values != 1:
-            print(f"*** ERROR: There were {num_null_values} unassigned variable(s). There should be 1 ***")
-            raise ValidationError(f"There were {num_null_values} unassigned variable(s). There should be 1")
+            print(f"*** ERROR: There were {num_null_values} unassigned variable(s). All of the boxes should be filled except for the variable you are trying to solve. ***")
+            raise ValidationError(f"There were {num_null_values} unassigned variable(s). All of the boxes should be filled except for the variable you are trying to solve.")
 
 def format_var_form(var_form, var_list_of_dicts):
+    # Populates the variable form from the list of variables
     for n, i in enumerate(var_list_of_dicts):
         l = Label(field_id = "variable", text = list(i.keys())[0])
         var_form.vars[n].variable.label = l
