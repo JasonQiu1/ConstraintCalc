@@ -2,7 +2,7 @@
 https://concalc.codes. A website implementing and extending the concept of constraint programming as found in Section 3.3.5 of _Structure and Interpretation of Computer Programs_ (see https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-22.html#%_sec_3.3.5) into a functional, user-friendly website. Uses Racket and Python for backend calculations and Flask, Gunicorn, and NGINX to serve the webpage.
 
 ## Overview
-- input any formula you want (no need to add spaces)
+- input any formula equation you want, meaning it must have a left expression and right expression separated by an equals sign (e.g. a + b = c * d)
 - input the values for all the variables except the unknown
 - hit calculate and the result will be displayed
 - a diagram of the internal constraint system will also be displayed
